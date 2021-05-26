@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+        "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+    <package name="s2s5h5" extends="struts-default">
+        <action name="savePerson" class="savePerson">
+            <result name="success" type="redirect">listPerson.action</result>
+        </action>
+
+        <action name="listPerson" class="listPerson">
+            <result name="success">listPerson.jsp</result>
+        </action>
+
+        <action name="updatePPerson" class="updatePPerson">
+            <result name="success">UpdatePerson.jsp</result>
+        </action>
+
+        <action name="updatePerson" class="updatePerson">
+            <result name="success" type="redirect">listPerson.action</result>
+        </action>
+
+        <action name="deletePerson" class="deletePerson">
+            <result name="success" type="redirect">listPerson.action</result>
+        </action>
+
+    </package>
+
+</struts>

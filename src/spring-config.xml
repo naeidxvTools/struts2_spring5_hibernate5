@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!--  1.第一步配置数据源 -->
+    <!--  1)spring自带的数据源-->
+    <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName" value="com.mysql.cj.jdbc.Driver"/>
+        <property name="url" value="jdbc:mysql://localhost:3306/struts2_spring5_hibernate5?serverTimezone=GMT&amp;useSSL=true"/>
+        <property name="username" value="root"/>
+        <property name="password" value="root"/>
+    </bean>
+
+
+    <!--  2)C3P0数据源
+    <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
+        <property name="driverClass" value="com.mysql.cj.jdbc.Driver"/>
+        <property name="jdbcUrl" value="jdbc:mysql://localhost:3306/struts2_spring5_hibernate5?serverTimezone=GMT&amp;useSSL=true"/>
+        <property name="user" value="root"/>
+        <property name="password" value="root"/>
+    </bean>
+    -->
+
+    <!--  3)DBCP2数据源:DBCP的配置依赖于2个jar包commons-dbcp2-2.5.0.jar，commons-pool2-2.4.2.jar
+    <bean id="dataSource" class="org.apache.commons.dbcp2.BasicDataSource" destroy-method="close">
+        <property name="driverClassName" value="com.mysql.cj.jdbc.Driver"/>
+        <property name="url" value="jdbc:mysql://localhost:3306/struts2_spring5_hibernate5?serverTimezone=GMT&amp;useSSL=true"/>
+        <property name="username" value="root"/>
+        <property name="password" value="root"/>
+    </bean>
+    -->
+
+    <!--  2.第二步配置SessionFactory -->
+    <bean id="sessionFactory" class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="mappingResources">
+            <list>
+                <value>Person.hbm.xml</value>
+            </list>
+        </property>
+        <property name="hibernateProperties">
+            <props>
+                <prop key="hibernate.dialect">org.hibernate.dialect.MySQL57Dialect</prop>
+                <prop key="hibernate.show_sql">true</prop>
+                <prop key="hibernate.hbm2ddl.auto">update</prop>
+                <prop key="hibernate.format_sql">true</prop>
+            </props>
+        </property>
+    </bean>
+
+    <!--  3.第三步配置Dao -->
+    <bean id="personDao" class="net.imwork.zhanlong.ssh.dao.impl.PersonDaoImpl">
+        <property name="sessionFactory" ref="sessionFactory"/>
+    </bean>
+
+    <!--  4.第四步配置service （配置事务的service）-->
+    <bean id="personServiceTarget" class="net.imwork.zhanlong.ssh.service.impl.PersonServiceImpl">
+        <property name="personDao" ref="personDao"/>
+    </bean>
+
+    <!-- 声明式的事务管理（Declarative Transaction）。 配置事务管理器 -->
+    <bean id="transactionManager" class="org.springframework.orm.hibernate5.HibernateTransactionManager">
+        <property name="sessionFactory" ref="sessionFactory"/>
+    </bean>
+
+    <!--  TransactionProxyFactoryBean类似一个组装器  -->
+    <bean id="personService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+        <property name="target" ref="personServiceTarget"/>
+        <property name="transactionManager" ref="transactionManager"/>
+        <property name="transactionAttributes">
+            <props>
+                <!-- 事务的传播（了解，主要记住第一种形式：PROPAGATION_REQUIRED） -->
+                <!-- PROPAGATION_REQUIRED:如果当前没有事务，则新建一个事务，如果已经存在一个事务当中，则加入到改事务。这是最常见的一种选择情况 -->
+                <!-- PROPAGATION_SUPPORTS:支持当前的事务，如果当前没有事务，就以非事务的方式执行。用的非常少。 -->
+                <!-- PROPAGATION_MANDATORY:使用当前的事务，如果当前没有事务，则抛出异常。 -->
+                <!-- PROPAGATION_REQUIRES:新建事务，如果当前存在事务，则把当前事务挂起。 -->
+                <!-- PROPAGATION_NOT_SUPPORTED:以非事务的方式执行，如果当前存在事务，则把当前的事务挂起。用的少。 -->
+                <!-- PROPAGATION_NOT_NEVER:以非事务的方式执行，如果当前存在事务，则抛出异常。用的少。 -->
+                <!-- PROPAGATION_NESTED:如果当面存在事务，则在嵌套的事务中执行。如果当前没有事务，则类似于PROPAGATION_REQUIRED。 -->
+                <prop key="list*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="get*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="*">PROPAGATION_REQUIRED</prop>
+            </props>
+        </property>
+    </bean>
+
+    <!--  5.第五步配置action -->
+    <bean id="savePerson" class="net.imwork.zhanlong.ssh.action.person.SavePerson" scope="prototype">
+        <property name="service" ref="personService"/>
+    </bean>
+
+    <bean id="listPerson" class="net.imwork.zhanlong.ssh.action.person.ListPerson" scope="prototype">
+        <property name="service" ref="personService"/>
+    </bean>
+
+    <bean id="updatePPerson" class="net.imwork.zhanlong.ssh.action.person.UpdatePPerson" scope="prototype">
+        <property name="service" ref="personService"/>
+    </bean>
+
+    <bean id="updatePerson" class="net.imwork.zhanlong.ssh.action.person.UpdatePerson" scope="prototype">
+        <property name="service" ref="personService"/>
+    </bean>
+
+    <bean id="deletePerson" class="net.imwork.zhanlong.ssh.action.person.DeletePerson" scope="prototype">
+        <property name="service" ref="personService"/>
+    </bean>
+</beans>
