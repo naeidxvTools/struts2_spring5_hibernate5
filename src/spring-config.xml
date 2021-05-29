@@ -71,10 +71,10 @@
         <property name="transactionAttributes">
             <props>
                 <!-- 事务的传播（了解，主要记住第一种形式：PROPAGATION_REQUIRED） -->
-                <!-- PROPAGATION_REQUIRED:如果当前没有事务，则新建一个事务，如果已经存在一个事务当中，则加入到改事务。这是最常见的一种选择情况 -->
+                <!-- PROPAGATION_REQUIRED:如果当前没有事务，则新建一个事务，如果已经存在一个事务当中，则加入到该事务。这是最常见的一种选择情况 -->
                 <!-- PROPAGATION_SUPPORTS:支持当前的事务，如果当前没有事务，就以非事务的方式执行。用的非常少。 -->
                 <!-- PROPAGATION_MANDATORY:使用当前的事务，如果当前没有事务，则抛出异常。 -->
-                <!-- PROPAGATION_REQUIRES:新建事务，如果当前存在事务，则把当前事务挂起。 -->
+                <!-- PROPAGATION_REQUIRES_NEW:新建事务，如果当前存在事务，则把当前事务挂起。 -->
                 <!-- PROPAGATION_NOT_SUPPORTED:以非事务的方式执行，如果当前存在事务，则把当前的事务挂起。用的少。 -->
                 <!-- PROPAGATION_NOT_NEVER:以非事务的方式执行，如果当前存在事务，则抛出异常。用的少。 -->
                 <!-- PROPAGATION_NESTED:如果当面存在事务，则在嵌套的事务中执行。如果当前没有事务，则类似于PROPAGATION_REQUIRED。 -->

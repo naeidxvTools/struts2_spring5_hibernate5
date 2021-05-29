@@ -8,6 +8,9 @@ import net.imwork.zhanlong.ssh.service.PersonService;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * @author Administrator
+ */
 public class ListPerson extends ActionSupport
 {
     private PersonService service;
@@ -23,6 +26,7 @@ public class ListPerson extends ActionSupport
     }
 
     @Override
+    @SuppressWarnings("all")
     public String execute() throws Exception
     {
         List<Person> list = service.listAllPersons();
